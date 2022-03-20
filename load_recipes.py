@@ -11,3 +11,7 @@
 """
 
 RECIPES_FOLDER = "recipes"
+
+"""
+toate functiile sa le mut aici si le import in partea cealalta
+"""
