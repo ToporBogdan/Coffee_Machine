@@ -1,57 +1,91 @@
-# text de introducere
-# optiune sa vezi ce comenzi stie aparatul
 
 from pprint import pprint
-import sys
-import os
+from load_recipes import GetDrinkData, GetDrinksDict, refillMachine
 
 print("Hi! I'm the best coffee maker eva!!! Enter a command and i will fulfill it.")
 print("To see a list of commands, please type 'help'")
-# cuvinte = input("Enter a command: ")
+cuvinte = input("Enter a command: ")
 
 # Commands
+HELP = "help"
 EXIT = "exit"
 LIST_COFFEES = "list"
 MAKE_COFFEE = "make"  
-HELP = "help"
 REFILL = "refill"
 RESOURCE_STATUS = "status"
-commands = [EXIT, LIST_COFFEES, MAKE_COFFEE, REFILL, RESOURCE_STATUS, HELP]
+commands = [HELP, EXIT, LIST_COFFEES, MAKE_COFFEE, REFILL, RESOURCE_STATUS]
 
-def GetDrinkData(drinkPath):
-    drinkFile = open(drinkPath, "r")
-    drinkLines = drinkFile.readlines()
-    
-    for i in range(len(drinkLines)):
-        drinkLines[i] = drinkLines[i].strip("\n")
-    # print(drinkLines)
-    
-    for i in range(len(drinkLines)):
-        if i == 0:
-            drinkLines[i] = [drinkLines[i]]
+machineResources = {}
+refillMachine(machineResources)
+
+while True:
+    if cuvinte == HELP:
+        print("Here are all the possible commands:", commands)
+        cuvinte = input("Enter a command: ")
+
+    if cuvinte == EXIT:
+        print("Have a good day!")
+        quit()
+
+    if cuvinte == LIST_COFFEES:
+        print(list(GetDrinksDict("recipes")))
+        cuvinte = input("Enter a command: ")
+
+    if cuvinte == REFILL:
+        refillMachine(machineResources)
+        print("The coffee machine was magically refilled!", machineResources)
+        cuvinte = input("Enter a command: ")
+
+    if cuvinte == RESOURCE_STATUS:
+        print("Current resources:", machineResources)
+        cuvinte = input("Enter a command: ")
+
+    if cuvinte == MAKE_COFFEE:
+        drinkName = input("Please enter the name of your desired drink: ")
+        drinkDict = GetDrinksDict("recipes")
+        recipe = drinkDict.get(drinkName)
+        
+        # Rezolva asta maine:
+        # try:
+        #     recipe = drinkDict.get(drinkName)
+        # except:
+        #     drinkName = input("We don't have this drink, please enter a new one: ")
+
+        # recipe = GetDrinksDict("recipes").get(input("Please enter the name of your desired drink: "))     #Codul de mai sus int-o linie
+        # print("Current resources:", machineResources)
+        # print("Cost of your drink:", recipe)
+
+        if int(machineResources.get("water")) >= int(recipe.get("water")) and int(machineResources.get("coffee")) >= int(recipe.get("coffee")) and int(machineResources.get("milk")) >= int(recipe.get("milk")): 
+            machineResources["water"] = int(machineResources.get("water") - recipe.get("water"))
+            machineResources["coffee"] = int(machineResources.get("coffee") - recipe.get("coffee"))
+            machineResources["milk"] = int(machineResources.get("milk") - recipe.get("milk"))
+            print(f"Here's your {drinkName}! Carefull, it's hot!")
+            # print ("Remaining resources:", machineResources)
         else:
-            drinkLines[i] = drinkLines[i].split("=")
-    # print(drinkLines)
-    drinkDict = {}
-    drinkName = drinkLines[0][0]
+            print("Please refill the coffee machine!")
+        cuvinte = input("Enter a command: ")
     
-    for i in range(1, len(drinkLines)):
-        ingredientName = drinkLines[i][0]
-        ingredientValue = int(drinkLines[i][1])
-        drinkDict[ingredientName] = ingredientValue
-    
-    return (drinkName, drinkDict)
+    else:
+        cuvinte = input("This command is not recognized. Please enter a new command: ")
 
 
-def GetDrinksDict(folderPath):
-    drinks = {}
-    all_files = os.listdir(folderPath)
-    for file in all_files:
-        currentDrink = GetDrinkData(folderPath + "/" + file)
-        drinks[currentDrink[0]] = currentDrink[1]
-    return drinks
 
-pprint(GetDrinksDict("recipes"))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
