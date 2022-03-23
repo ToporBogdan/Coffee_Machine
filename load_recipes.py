@@ -51,6 +51,14 @@ def refillMachine(machineResources):
 	machineResources["coffee"] = 100
 	machineResources["milk"] = 100
 
-"""
-toate functiile sa le mut aici si le import in partea cealalta
-"""
+def resourceCondition(machineResources, recipe):
+	if	int(machineResources.get("water")) >= int(recipe.get("water")) and \
+		int(machineResources.get("coffee")) >= int(recipe.get("coffee")) and \
+		int(machineResources.get("milk")) >= int(recipe.get("milk")):
+		return True
+
+
+
+
+
+
